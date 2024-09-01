@@ -44,8 +44,8 @@ router.post("/login", async (req, res) => {
 
     if (user) {
       const isMatch = await user.comparePassword(password);
-
       if (isMatch) {
+        res.cookie("iamtoken", user.token, { maxAge: utils.horasEnMilisegundos(2), httpOnly: true });
         res.redirect("/");
       } else {
         // Mostrar mensaje de error
