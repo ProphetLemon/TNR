@@ -10,6 +10,8 @@ router.get("/", async (req, res) => {
     if (req.cookies.iamtoken) {
       // Buscar un usuario con el token correspondiente en la base de datos
       const user = await User.findOne({ token: req.cookies.iamtoken });
+      //resetear cookie
+      res.cookie("iamtoken", user.token, { maxAge: utils.horasEnMilisegundos(2), httpOnly: true });
 
       if (user) {
         // Si el usuario es encontrado, renderizar la vista principal
@@ -44,7 +46,6 @@ router.post("/login", async (req, res) => {
       const isMatch = await user.comparePassword(password);
 
       if (isMatch) {
-        res.cookie("iamtoken", user.token, { maxAge: 900000, httpOnly: true });
         res.redirect("/");
       } else {
         // Mostrar mensaje de error
@@ -86,7 +87,7 @@ router.post("/register", async (req, res) => {
     await newUser.save();
 
     // Establecer la cookie 'iamtoken' con el token del nuevo usuario
-    res.cookie("iamtoken", newUser.token, { maxAge: 900000, httpOnly: true });
+    res.cookie("iamtoken", newUser.token, { maxAge: utils.horasEnMilisegundos(2), httpOnly: true });
 
     // Redirigir al usuario a la página principal
     res.redirect("/");

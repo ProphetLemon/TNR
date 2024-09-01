@@ -45,10 +45,20 @@ function crearProyeccion(user) {
   return { username: user.username, points: user.points };
 }
 
+/**
+ * Transforma horas en milisegundos
+ * @param {number} horas Número de horas a transformar
+ * @returns {number} Milisegundos de las horas dadas
+ */
+function horasEnMilisegundos(horas) {
+  return horas * 60 * 60 * 1000;
+}
+
 // Exportar las funciones para que puedan ser utilizadas en otros archivos
 module.exports = {
   getCurrentDateTime,
   getRandomNumber,
   crearProyeccion,
   capitalizeFirstLetter,
+  horasEnMilisegundos,
 };
