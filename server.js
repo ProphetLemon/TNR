@@ -54,7 +54,6 @@ mongoose
   });
 
 // Iniciar el servidor en el puerto 3000
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`${utils.getCurrentDateTime()} - Aplicación iniciada en el puerto ${PORT}!`);
+app.listen(process.env.PORT || 5000, () => {
+  console.log(`${utils.getCurrentDateTime()} - Aplicación iniciada!`);
 });
