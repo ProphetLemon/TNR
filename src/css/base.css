@@ -18,11 +18,11 @@ body {
 
 /* Estilo para el contenido principal */
 .main-content {
-  flex: 1; /* Esto permite que el contenido principal se expanda y empuje el footer hacia abajo */
+  flex: 1; /* Permite que el contenido principal se expanda y empuje el footer hacia abajo */
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px; /* Padding para asegurar que el contenido no se pegue a los bordes */
+  padding: 20px; /* Asegura que el contenido no se pegue a los bordes */
 }
 
 /* Estilo para el contenedor del formulario */
@@ -32,16 +32,75 @@ body {
   border: 1px solid #ced4da;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Añadir una sombra para darle un poco de profundidad */
-  max-width: 400px; /* Ajustar el ancho máximo del formulario */
-  width: 100%; /* Asegurar que el formulario ocupe el 100% del ancho disponible hasta el max-width */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Añadir una sombra para darle profundidad */
+  max-width: 400px; /* Ancho máximo del formulario */
+  width: 100%; /* El formulario ocupa el 100% del ancho disponible hasta el max-width */
 }
 
-/* Estilo para el navbar en modo claro */
+/* Estilo para el navbar */
 .navbar {
-  background-color: #e3f2fd !important; /* Color de fondo azul claro para diferenciar del blanco */
-  border-bottom: 1px solid #ccc !important; /* Añadir un borde inferior */
+  background-color: #e3f2fd !important; /* Fondo azul claro en modo claro */
+  border-bottom: 1px solid #ccc !important; /* Añadir borde inferior */
   margin-bottom: 20px !important;
+}
+
+/* Estilo para el footer */
+.footer {
+  background-color: #e3f2fd !important; /* Fondo claro para el footer en modo claro */
+  color: #212529; /* Color de texto oscuro en modo claro */
+  padding: 10px 0;
+  text-align: center;
+}
+
+/* Estilo para el modal */
+.modal-content {
+  background-color: #ffffff;
+  color: #212529;
+}
+
+/* Estilo general para el toggle switch */
+.form-check-input {
+  width: 50px;
+  height: 25px;
+  background-color: #007bff;
+  border: 2px solid #0056b3;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.form-check-input:checked {
+  background-color: #495057; /* Color para el modo oscuro */
+  border-color: #343a40; /* Borde para el modo oscuro */
+}
+
+.form-check-label {
+  margin-left: 10px;
+  font-size: 1rem;
+  color: #121212; /* Color predeterminado para el modo claro */
+}
+
+/* Estilo general para el botón navbar-toggler */
+.navbar-toggler {
+  border: 2px solid transparent; /* Bordes iniciales transparentes */
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Estilo para el icono del navbar-toggler en modo claro */
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba%280, 0, 0, 0.7%29' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+.navbar-light .navbar-toggler {
+  background-color: #007bff; /* Fondo azul brillante */
+  border-color: #0056b3; /* Borde azul oscuro */
+}
+
+.navbar-light .navbar-toggler:hover,
+.navbar-light .navbar-toggler:focus {
+  background-color: #0056b3; /* Fondo más oscuro al hacer hover o focus */
+  border-color: #004085; /* Borde más oscuro al hacer hover o focus */
 }
 
 /* Estilo para el modo oscuro */
@@ -51,14 +110,29 @@ body.dark-mode {
 }
 
 /* Estilo para el navbar en modo oscuro */
-.navbar-dark-mode {
-  background-color: #1a1a1a !important; /* Fondo gris casi negro para el navbar en modo oscuro */
+body.dark-mode .navbar-dark-mode {
+  background-color: #1a1a1a !important; /* Fondo gris casi negro */
   color: #ffffff !important;
-  border-bottom: 1px solid #555 !important; /* Borde inferior para separar del contenido */
+  border-bottom: 1px solid #555 !important; /* Borde inferior */
+}
+
+body.dark-mode .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba%28255, 255, 255, 0.7%29' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+body.dark-mode .navbar-dark-mode .navbar-toggler {
+  background-color: #444444; /* Fondo gris oscuro */
+  border-color: #666666; /* Borde gris más claro */
+}
+
+body.dark-mode .navbar-dark-mode .navbar-toggler:hover,
+body.dark-mode .navbar-dark-mode .navbar-toggler:focus {
+  background-color: #666666; /* Fondo más claro al hacer hover o focus */
+  border-color: #888888; /* Borde más claro al hacer hover o focus */
 }
 
 /* Estilo para el formulario en modo oscuro */
-.dark-mode .form-container {
+body.dark-mode .form-container {
   background-color: #2c2c2c;
   border: 1px solid #444;
 }
@@ -73,46 +147,37 @@ body.dark-mode {
   cursor: pointer;
 }
 
-/* Botón en modo oscuro */
 body.dark-mode #toggleDarkMode {
   background-color: #444444; /* Fondo oscuro en modo oscuro */
   color: #ffffff; /* Texto claro en modo oscuro */
 }
 
-/* Estilo para el footer */
-.footer {
-  background-color: #e3f2fd !important; /* Fondo claro para el footer en modo claro */
-  color: #212529; /* Color de texto oscuro en modo claro */
-  padding: 10px 0;
-  text-align: center;
+body.dark-mode .form-check-label {
+  color: #ccc; /* Color del texto del toggle switch en modo oscuro */
 }
 
+/* Estilo para el footer en modo oscuro */
 body.dark-mode .footer {
-  background-color: #1a1a1a !important; /* Fondo oscuro para el footer en modo oscuro */
-  color: #d3d3d3 !important; /* Color de texto claro en modo oscuro */
-}
-
-/* Estilo para el modal en modo claro */
-.modal-content {
-  background-color: #ffffff;
-  color: #212529;
+  background-color: #1a1a1a !important; /* Fondo oscuro para el footer */
+  color: #d3d3d3 !important; /* Color de texto claro */
 }
 
 /* Estilo para el modal en modo oscuro */
 body.dark-mode .modal-content {
   background-color: #2c2c2c; /* Fondo oscuro para el modal */
-  color: #ffffff; /* Texto claro para el modal */
+  color: #ffffff; /* Texto claro */
   border: 1px solid #444;
+}
+
+/* Estilos para los enlaces y las imágenes en el footer */
+.footer a {
+  text-decoration: none; /* Eliminar subrayado */
 }
 
 .footer a img {
   border: none;
   outline: none;
-  text-decoration: none;
-}
-
-.footer a {
-  text-decoration: none; /* Eliminar subrayado */
+  transition: transform 0.2s;
 }
 
 .footer a:focus {
@@ -121,5 +186,4 @@ body.dark-mode .modal-content {
 
 .footer a img:hover {
   transform: scale(1.1); /* Añadir un ligero zoom al pasar el cursor */
-  transition: transform 0.2s;
 }

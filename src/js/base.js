@@ -1,7 +1,7 @@
 // base.js
 
 document.addEventListener("DOMContentLoaded", function () {
-  const toggleButton = document.getElementById("toggleDarkMode");
+  const toggleSwitch = document.getElementById("toggleDarkMode");
   const body = document.body;
   const navbar = document.querySelector(".navbar");
 
@@ -11,23 +11,22 @@ document.addEventListener("DOMContentLoaded", function () {
   if (darkMode === "enabled") {
     body.classList.add("dark-mode");
     navbar.classList.add("navbar-dark-mode");
-    toggleButton.textContent = "Modo Claro";
+    toggleSwitch.checked = true; // Marcar el toggle si el modo oscuro está habilitado
   } else {
     body.classList.remove("dark-mode");
     navbar.classList.remove("navbar-dark-mode");
-    toggleButton.textContent = "Modo Oscuro";
+    toggleSwitch.checked = false; // Desmarcar el toggle si el modo claro está habilitado
   }
 
   // Función para alternar modo oscuro/claro
-  toggleButton.addEventListener("click", function () {
-    body.classList.toggle("dark-mode");
-    navbar.classList.toggle("navbar-dark-mode");
-
-    if (body.classList.contains("dark-mode")) {
-      toggleButton.textContent = "Modo Claro";
+  toggleSwitch.addEventListener("change", function () {
+    if (toggleSwitch.checked) {
+      body.classList.add("dark-mode");
+      navbar.classList.add("navbar-dark-mode");
       setCookie("darkMode", "enabled", 7); // Guarda la preferencia en la cookie por 7 días
     } else {
-      toggleButton.textContent = "Modo Oscuro";
+      body.classList.remove("dark-mode");
+      navbar.classList.remove("navbar-dark-mode");
       setCookie("darkMode", "disabled", 7); // Guarda la preferencia en la cookie por 7 días
     }
   });

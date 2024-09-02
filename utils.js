@@ -42,7 +42,7 @@ function capitalizeFirstLetter(string) {
  * @param {user} user
  */
 function crearProyeccion(user) {
-  return { username: user.username, points: user.points };
+  return { username: user.username, tiradas: user.tiradas };
 }
 
 /**

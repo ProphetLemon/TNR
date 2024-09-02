@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
       res.redirect("/login");
     }
   } catch (error) {
-    console.error("Error al buscar el usuario por token:", error);
+    console.error(`${utils.getCurrentDateTime()} - Error al buscar el usuario por token:`, error);
     res.redirect("/login");
   }
 });
@@ -56,7 +56,7 @@ router.post("/login", async (req, res) => {
       res.render("login", { message: "Usuario no encontrado. Inténtalo de nuevo.", type: "danger" });
     }
   } catch (error) {
-    console.error("Error al intentar iniciar sesión:", error);
+    console.error(`${utils.getCurrentDateTime()} - Error al intentar iniciar sesión:`, error);
     res.render("login", { message: "Error del servidor. Por favor, inténtalo más tarde.", type: "danger" });
   }
 });
@@ -98,7 +98,7 @@ router.post("/register", async (req, res) => {
       return res.render("login", { message: messages.join(" "), type: "danger" });
     }
 
-    console.error("Error al intentar registrar al usuario:", error);
+    console.error(`${utils.getCurrentDateTime()} - Error al intentar registrar al usuario:`, error);
     res.render("login", { message: "Error del servidor. Por favor, inténtalo más tarde.", type: "danger" });
   }
 });
