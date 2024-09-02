@@ -1,5 +1,3 @@
-/* index.css */
-
 /* Estilos generales para las tarjetas */
 .custom-card {
   background-color: #ffffff;
@@ -38,43 +36,109 @@
 /* Estilos generales para los botones con animaciones */
 .tiradas-buttons .btn {
   position: relative;
-  overflow: hidden; /* Para contener el efecto ripple */
+  overflow: hidden;
   z-index: 0;
   transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .tiradas-buttons .btn:hover {
-  transform: scale(1.05); /* Aumenta ligeramente el tamaño del botón */
-  background-color: #0056b3; /* Oscurece el color del fondo al hacer hover */
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Añade una sombra más pronunciada */
+  transform: scale(1.05);
+  background-color: #0056b3;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 
 .tiradas-buttons .btn:active {
-  transform: scale(1); /* Vuelve al tamaño original al hacer clic */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra más ligera al hacer clic */
+  transform: scale(1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Estilo para el efecto ripple */
-.btn::after,
-.btn span.ripple {
-  content: "";
-  position: absolute;
-  background: rgba(255, 255, 255, 0.5); /* Color blanco semitransparente */
-  border-radius: 50%;
-  width: 100px; /* Tamaño inicial del ripple */
-  height: 100px;
-  transform: scale(0);
-  animation: ripple-effect 0.6s ease-out;
-  pointer-events: none; /* Hace que el efecto no interfiera con el click del botón */
-  z-index: 1; /* Asegura que el ripple esté por encima del contenido del botón */
+/* Estilos para las cartas en el modal */
+.card-container {
+  perspective: 1000px;
+  width: 150px;
+  height: 200px;
 }
 
-/* Animación para el efecto ripple */
-@keyframes ripple-effect {
-  to {
-    transform: scale(4); /* Expande el ripple */
-    opacity: 0; /* Desvanece el ripple */
+.result-card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateY(180deg); /* Inicialmente boca abajo */
+  transition: transform 0.6s ease, box-shadow 0.6s ease;
+  cursor: pointer;
+}
+
+/* Efecto de brillo para cartas boca abajo */
+@keyframes shine {
+  0% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
   }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  }
+}
+
+.result-card.is-flipped {
+  animation: shine 1.5s infinite ease-in-out;
+}
+
+/* Cuando la carta está revelada, quitar la animación y mostrar el frente */
+.result-card:not(.is-flipped) {
+  transform: rotateY(0deg);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Restaura un leve shadow para la carta revelada */
+}
+
+.result-card .card-front,
+.result-card .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+}
+
+/* Parte trasera, color cartón y logo centrado */
+.result-card .card-back {
+  background-color: #a0522d; /* Color marrón tipo cartón */
+  background-image: url("/src/img/TNR-logo.png");
+  background-size: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: rotateY(180deg);
+}
+
+.result-card,
+.card-container {
+  border-radius: 10px; /* Ajusta este valor si es necesario para que coincida */
+}
+
+/* Parte frontal, el contenido de la carta revelada */
+.result-card.normal .card-front {
+  background-color: #6c757d; /* Normal */
+}
+
+.result-card.rara .card-front {
+  background-color: #28a745; /* Rara */
+}
+
+.result-card.super-rara .card-front {
+  background-color: #ffc107; /* Super Rara */
+}
+
+.result-card.legendaria .card-front {
+  background-color: #dc3545; /* Legendaria */
+}
+
+.result-card .card-front {
+  color: white;
 }
 
 /* Estilos para las tarjetas en modo oscuro */
@@ -93,41 +157,6 @@ body.dark-mode .tiradas-buttons .btn {
   background-color: #444;
   border-color: #444;
   color: #d3d3d3;
-}
-
-/* Estilo para las tarjetas dentro del modal */
-.result-card {
-  width: 150px;
-  height: 200px;
-  background-color: #007bff; /* Color base */
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.2rem;
-  transition: transform 0.3s ease;
-}
-
-.result-card.normal {
-  background-color: #6c757d; /* Normal */
-}
-
-.result-card.rara {
-  background-color: #28a745; /* Rara */
-}
-
-.result-card.super-rara {
-  background-color: #ffc107; /* Super Rara */
-}
-
-.result-card.legendaria {
-  background-color: #dc3545; /* Legendaria */
-}
-
-.result-card:hover {
-  transform: scale(1.05); /* Efecto de zoom en hover */
 }
 
 /* Animación de entrada para el modal */

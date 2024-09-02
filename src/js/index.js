@@ -41,10 +41,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Función para crear una tarjeta con el resultado de la tirada
   function createCard(type) {
+    const cardContainer = document.createElement("div");
+    cardContainer.classList.add("card-container");
+
     const card = document.createElement("div");
-    card.classList.add("result-card", type);
-    card.textContent = `Carta ${type.charAt(0).toUpperCase() + type.slice(1)}`;
-    return card;
+    card.classList.add("result-card", type, "is-flipped"); // Añade 'is-flipped' para que empiecen boca abajo
+
+    // Lado frontal de la carta (revelado)
+    const cardFront = document.createElement("div");
+    cardFront.classList.add("card-front");
+    cardFront.textContent = `Carta ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+
+    // Lado trasero de la carta (boca abajo)
+    const cardBack = document.createElement("div");
+    cardBack.classList.add("card-back");
+    //cardBack.textContent = "Carta";
+
+    card.appendChild(cardFront);
+    card.appendChild(cardBack);
+    cardContainer.appendChild(card);
+
+    // Evento para voltear la carta
+    cardContainer.addEventListener("click", function () {
+      card.classList.toggle("is-flipped");
+    });
+
+    return cardContainer;
   }
 
   // Función para manejar el clic en los botones de tiradas
@@ -56,8 +78,8 @@ document.addEventListener("DOMContentLoaded", function () {
       // Genera las tarjetas y las añade al modal
       for (let i = 0; i < numTiradas; i++) {
         const cardType = getCardType();
-        const card = createCard(cardType);
-        modalBody.appendChild(card);
+        const cardContainer = createCard(cardType);
+        modalBody.appendChild(cardContainer);
       }
 
       // Muestra el modal con los resultados
