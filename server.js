@@ -42,7 +42,6 @@ mongoose
           user.points += 5;
           await user.save();
         });
-        console.log("Puntos actualizados para todos los usuarios.");
       } catch (error) {
         console.error("Error al actualizar los puntos:", error);
       }
