@@ -1,0 +1,147 @@
+/* index.css */
+
+/* Estilos generales para las tarjetas */
+.custom-card {
+  background-color: #ffffff;
+  border: 1px solid #ced4da;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  max-width: 600px;
+  width: 100%;
+  margin: auto;
+}
+
+.custom-card .card-title {
+  font-weight: bold;
+  font-size: 2rem;
+  color: #495057;
+}
+
+/* Estilos específicos para las tarjetas */
+.user-card .card-title {
+  font-size: 2rem;
+}
+
+.tiradas-card .card-title {
+  font-size: 1.5rem;
+}
+
+/* Estilos para los botones de tiradas */
+.tiradas-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Estilos generales para los botones con animaciones */
+.tiradas-buttons .btn {
+  position: relative;
+  overflow: hidden; /* Para contener el efecto ripple */
+  z-index: 0;
+  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tiradas-buttons .btn:hover {
+  transform: scale(1.05); /* Aumenta ligeramente el tamaño del botón */
+  background-color: #0056b3; /* Oscurece el color del fondo al hacer hover */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Añade una sombra más pronunciada */
+}
+
+.tiradas-buttons .btn:active {
+  transform: scale(1); /* Vuelve al tamaño original al hacer clic */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra más ligera al hacer clic */
+}
+
+/* Estilo para el efecto ripple */
+.btn::after,
+.btn span.ripple {
+  content: "";
+  position: absolute;
+  background: rgba(255, 255, 255, 0.5); /* Color blanco semitransparente */
+  border-radius: 50%;
+  width: 100px; /* Tamaño inicial del ripple */
+  height: 100px;
+  transform: scale(0);
+  animation: ripple-effect 0.6s ease-out;
+  pointer-events: none; /* Hace que el efecto no interfiera con el click del botón */
+  z-index: 1; /* Asegura que el ripple esté por encima del contenido del botón */
+}
+
+/* Animación para el efecto ripple */
+@keyframes ripple-effect {
+  to {
+    transform: scale(4); /* Expande el ripple */
+    opacity: 0; /* Desvanece el ripple */
+  }
+}
+
+/* Estilos para las tarjetas en modo oscuro */
+body.dark-mode .custom-card {
+  background-color: #2c2c2c;
+  border: 1px solid #444;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .custom-card .card-title,
+body.dark-mode .custom-card .card-text {
+  color: #d3d3d3;
+}
+
+body.dark-mode .tiradas-buttons .btn {
+  background-color: #444;
+  border-color: #444;
+  color: #d3d3d3;
+}
+
+/* Estilo para las tarjetas dentro del modal */
+.result-card {
+  width: 150px;
+  height: 200px;
+  background-color: #007bff; /* Color base */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.result-card.normal {
+  background-color: #6c757d; /* Normal */
+}
+
+.result-card.rara {
+  background-color: #28a745; /* Rara */
+}
+
+.result-card.super-rara {
+  background-color: #ffc107; /* Super Rara */
+}
+
+.result-card.legendaria {
+  background-color: #dc3545; /* Legendaria */
+}
+
+.result-card:hover {
+  transform: scale(1.05); /* Efecto de zoom en hover */
+}
+
+/* Animación de entrada para el modal */
+@keyframes slideIn {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  animation: slideIn 0.5s ease;
+}

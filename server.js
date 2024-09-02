@@ -33,13 +33,15 @@ app.use("/", indexRouter);
 mongoose
   .connect(process.env.BBDD_URL)
   .then(() => {
-    console.log("Conectado a MongoDB!");
+    console.log(`${utils.getCurrentDateTime()} - Conectado a MongoDB!`);
     // Tarea programada para ejecutarse cada 5 minutos
-    cron.schedule("*/5 * * * * *", async () => {
+    cron.schedule("*/14 * * * *", async () => {
       try {
         const users = await User.find();
         users.forEach(async (user) => {
-          user.points += 5;
+          if (user.tiradas < 60) {
+            user.tiradas += 1;
+          }
           await user.save();
         });
       } catch (error) {
@@ -48,7 +50,7 @@ mongoose
     });
   })
   .catch((err) => {
-    console.error("Error al conectar a MongoDB:", err);
+    console.error(`${utils.getCurrentDateTime()} - Error al conectar a MongoDB:`, err);
   });
 
 // Iniciar el servidor en el puerto 3000

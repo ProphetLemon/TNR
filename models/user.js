@@ -34,7 +34,7 @@ const userSchema = new Schema({
     default: generateUUID, // Establece el token por defecto usando la función generateUUID
     unique: true,
   },
-  points: {
+  tiradas: {
     type: Number,
     default: 0, // Inicializa los puntos en 0
   },
