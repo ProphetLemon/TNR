@@ -41,7 +41,6 @@ mongoose
   .then(() => {
     console.log(`${utils.getCurrentDateTime()} - Conectado a MongoDB!`);
     // Tarea programada para ejecutarse cada 5 minutos
-    return;
     cron.schedule("*/14 * * * *", async () => {
       try {
         const users = await User.find();
