@@ -1,120 +1,51 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const buttons = document.querySelectorAll(".tiradas-buttons .btn");
+  const toggleSwitch = document.getElementById("toggleDarkMode");
+  const body = document.body;
+  const navbar = document.querySelector(".navbar");
 
-  buttons.forEach((button) => {
-    button.addEventListener("click", function (e) {
-      // Obtener la posición relativa del click dentro del botón
-      const rect = button.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+  // Leer el valor de la cookie para determinar el modo inicial
+  const darkMode = getCookie("darkMode");
 
-      // Establecer las propiedades CSS para el efecto ripple
-      const ripple = document.createElement("span");
-      ripple.style.left = `${x - 50}px`; // Ajuste para centrar el ripple
-      ripple.style.top = `${y - 50}px`;
-      ripple.classList.add("ripple");
-
-      // Añadir el span al botón
-      button.appendChild(ripple);
-
-      // Eliminar el span después de la animación
-      setTimeout(() => {
-        ripple.remove();
-      }, 600); // Duración de la animación
-    });
-  });
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-  const buttons = document.querySelectorAll(".tiradas-buttons .btn");
-  const modalBody = document.querySelector("#resultModal .modal-body");
-  const resultModal = new bootstrap.Modal(document.getElementById("resultModal"));
-
-  // Función para determinar el tipo de carta ganada
-  function getCardType() {
-    const random = Math.random();
-    if (random < 0.6) return "normal";
-    if (random < 0.85) return "rara";
-    if (random < 0.97) return "super-rara";
-    return "legendaria";
+  if (darkMode === "enabled") {
+    body.classList.add("dark-mode");
+    navbar.classList.add("navbar-dark-mode");
+    toggleSwitch.checked = true; // Marcar el toggle si el modo oscuro está habilitado
+  } else {
+    body.classList.remove("dark-mode");
+    navbar.classList.remove("navbar-dark-mode");
+    toggleSwitch.checked = false; // Desmarcar el toggle si el modo claro está habilitado
   }
 
-  // Función para crear una tarjeta con el resultado de la tirada
-  function createCard(type) {
-    const cardContainer = document.createElement("div");
-    cardContainer.classList.add("card-container");
-
-    const card = document.createElement("div");
-    card.classList.add("result-card", type, "is-flipped"); // Añade 'is-flipped' para que empiecen boca abajo
-
-    // Lado frontal de la carta (revelado)
-    const cardFront = document.createElement("div");
-    cardFront.classList.add("card-front");
-    cardFront.textContent = `Carta ${type.charAt(0).toUpperCase() + type.slice(1)}`;
-
-    // Lado trasero de la carta (boca abajo)
-    const cardBack = document.createElement("div");
-    cardBack.classList.add("card-back");
-    //cardBack.textContent = "Carta";
-
-    card.appendChild(cardFront);
-    card.appendChild(cardBack);
-    cardContainer.appendChild(card);
-
-    // Evento para voltear la carta
-    cardContainer.addEventListener("click", function () {
-      card.classList.toggle("is-flipped");
-    });
-
-    return cardContainer;
-  }
-
-  // Función para manejar el clic en los botones de tiradas
-  buttons.forEach((button) => {
-    button.addEventListener("click", function () {
-      const numTiradas = parseInt(this.textContent.match(/\d+/)[0]); // Extrae el número de tiradas del texto del botón
-
-      // Realiza la petición AJAX a /tiradas usando jQuery
-      $.ajax({
-        url: "/tiradas",
-        type: "POST",
-        data: { numTiradas: numTiradas },
-        success: function (response) {
-          if (response.type === "success") {
-            modalBody.innerHTML = ""; // Limpia el contenido del modal
-
-            // Genera las tarjetas y las añade al modal
-            for (let i = 0; i < numTiradas; i++) {
-              const cardType = getCardType();
-              const cardContainer = createCard(cardType);
-              modalBody.appendChild(cardContainer);
-            }
-
-            // Muestra el modal con los resultados
-            resultModal.show();
-          }
-
-          $("h4 strong").text(response.tiradasRestantes);
-        },
-        error: function (xhr, status, error) {
-          console.error("Hubo un problema con la petición:", status, error);
-          // Actualizar el partial de notificaciones con un mensaje genérico de error
-          updateNotificationPartial(xhr.responseJSON.message, "danger");
-        },
-      });
-    });
-  });
-
-  // Función para actualizar el partial de notificaciones
-  function updateNotificationPartial(message, type) {
-    const notificationPartial = document.getElementById("notification-partial");
-
-    if (notificationPartial) {
-      notificationPartial.innerHTML = `
-      <div class="alert alert-${type}" role="alert">
-        ${message}
-      </div>
-    `;
+  // Función para alternar modo oscuro/claro
+  toggleSwitch.addEventListener("change", function () {
+    if (toggleSwitch.checked) {
+      body.classList.add("dark-mode");
+      navbar.classList.add("navbar-dark-mode");
+      setCookie("darkMode", "enabled", 7); // Guarda la preferencia en la cookie por 7 días
+    } else {
+      body.classList.remove("dark-mode");
+      navbar.classList.remove("navbar-dark-mode");
+      setCookie("darkMode", "disabled", 7); // Guarda la preferencia en la cookie por 7 días
     }
-  }
+  });
 });
+
+// Función para establecer una cookie
+function setCookie(name, value, days) {
+  const date = new Date();
+  date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+  const expires = "expires=" + date.toUTCString();
+  document.cookie = name + "=" + value + ";" + expires + ";path=/";
+}
+
+// Función para obtener el valor de una cookie
+function getCookie(name) {
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(";");
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === " ") c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+}
