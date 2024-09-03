@@ -1,5 +1,3 @@
-// base.js
-
 document.addEventListener("DOMContentLoaded", function () {
   const toggleSwitch = document.getElementById("toggleDarkMode");
   const body = document.body;
