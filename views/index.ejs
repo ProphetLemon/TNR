@@ -20,11 +20,15 @@
         <div class="card-body text-center">
           <h2 class="card-title">Hola, <%= usuario.username %>!</h2>
         </div>
+        <a class="m-auto" href="/album"><button class="btn btn-primary">Ver album</button></a>
       </div>
 
       <!-- Tarjeta para las tiradas -->
       <div class="card custom-card tiradas-card">
         <div class="card-body text-center">
+          <!-- Incluir el partial de notificaciones -->
+          <%- include('partials/notification', { message: message, type: type }) %>
+
           <h4 class="card-title">Tiradas disponibles: <strong><%= usuario.tiradas %></strong></h4>
           <div class="tiradas-buttons">
             <% if (usuario.tiradas >= 1) { %>
@@ -58,7 +62,7 @@
     <%- include('partials/footer') %>
 
     <!-- Incluir el JavaScript de jQuery (opcional) -->
-    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
     <!-- Incluir el JavaScript de Bootstrap 5.3.3 -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Incluir el JavaScript personalizado -->

@@ -3,6 +3,8 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const utils = require("./utils");
 const mongoose = require("mongoose");
+const baseRouter = require("./routers/baseRouter");
+const albumRouter = require("./routers/albumRouter");
 const indexRouter = require("./routers/indexRouter");
 const dotenv = require("dotenv");
 const cron = require("node-cron");
@@ -27,7 +29,11 @@ app.use(cookieParser());
 app.use("/src", express.static(path.join(__dirname, "src")));
 
 // Usar el enrutador para manejar las rutas principales
-app.use("/", indexRouter);
+app.use("/", baseRouter);
+
+app.use("/tiradas", indexRouter);
+
+app.use("/album", albumRouter);
 
 // Conectar a MongoDB
 mongoose
@@ -35,6 +41,7 @@ mongoose
   .then(() => {
     console.log(`${utils.getCurrentDateTime()} - Conectado a MongoDB!`);
     // Tarea programada para ejecutarse cada 5 minutos
+    return;
     cron.schedule("*/14 * * * *", async () => {
       try {
         const users = await User.find();

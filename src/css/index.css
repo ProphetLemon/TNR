@@ -57,6 +57,7 @@
   perspective: 1000px;
   width: 150px;
   height: 200px;
+  position: relative;
 }
 
 .result-card {
@@ -69,21 +70,100 @@
   cursor: pointer;
 }
 
-/* Efecto de brillo para cartas boca abajo */
-@keyframes shine {
+/* Brillo de cada rareza */
+@keyframes shine-normal {
   0% {
-    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.7); /* Brillo azul */
   }
   50% {
-    box-shadow: 0 0 20px rgba(255, 255, 255, 1);
+    box-shadow: 0 0 30px rgba(0, 123, 255, 1);
   }
   100% {
-    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.7);
   }
 }
 
-.result-card.is-flipped {
-  animation: shine 1.5s infinite ease-in-out;
+@keyframes shine-rara {
+  0% {
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.7); /* Brillo verde */
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(40, 167, 69, 1);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.7);
+  }
+}
+
+@keyframes shine-super-rara {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.7); /* Brillo amarillo */
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 193, 7, 1);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.7);
+  }
+}
+
+.result-card.normal {
+  animation: shine-normal 1.5s infinite ease-in-out;
+}
+
+.result-card.rara {
+  animation: shine-rara 1.5s infinite ease-in-out;
+}
+
+.result-card.super-rara {
+  animation: shine-super-rara 1.5s infinite ease-in-out;
+}
+
+/* Efecto shine gradiente giratorio para la carta legendaria */
+.result-card.legendaria::before {
+  content: "";
+  position: absolute;
+  top: -6px; /* Ajustar según el tamaño del brillo */
+  left: -6px;
+  right: -6px;
+  bottom: -6px;
+  z-index: -1;
+  border-radius: 12px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 1) 0%,
+    rgba(255, 154, 0, 1) 16.67%,
+    rgba(208, 222, 33, 1) 33.33%,
+    rgba(79, 220, 74, 1) 50%,
+    rgba(9, 126, 236, 1) 66.67%,
+    rgb(192, 28, 238) 83.33%,
+    rgb(238, 28, 116) 90%
+  );
+  background-size: 200% 200%;
+  animation: rotate-gradient 2s linear infinite;
+  filter: blur(10px); /* Suaviza el brillo */
+}
+
+@keyframes rotate-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* Fondo de la parte trasera de las cartas */
+.result-card .card-back {
+  background-color: #a0522d; /* Color marrón tipo cartón */
+  border-radius: 8px; /* Ajusta este valor si es necesario para que coincida */
+  width: 100%;
+  height: 100%;
+  background-image: url("/src/img/TNR-logo.png");
+  background-size: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: rotateY(180deg);
 }
 
 /* Cuando la carta está revelada, quitar la animación y mostrar el frente */
@@ -108,10 +188,6 @@
 /* Parte trasera, color cartón y logo centrado */
 .result-card .card-back {
   background-color: #a0522d; /* Color marrón tipo cartón */
-  background-image: url("/src/img/TNR-logo.png");
-  background-size: 50%;
-  background-repeat: no-repeat;
-  background-position: center;
   transform: rotateY(180deg);
 }
 
@@ -122,11 +198,11 @@
 
 /* Parte frontal, el contenido de la carta revelada */
 .result-card.normal .card-front {
-  background-color: #6c757d; /* Normal */
+  background-color: #007bff; /* Azul */
 }
 
 .result-card.rara .card-front {
-  background-color: #28a745; /* Rara */
+  background-color: #28a745; /* Verde */
 }
 
 .result-card.super-rara .card-front {
@@ -153,7 +229,7 @@ body.dark-mode .custom-card .card-text {
   color: #d3d3d3;
 }
 
-body.dark-mode .tiradas-buttons .btn {
+body.dark-mode .btn {
   background-color: #444;
   border-color: #444;
   color: #d3d3d3;
