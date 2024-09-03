@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Álbum de Cartas</title>
+    <!-- Incluir el CSS de Bootstrap 5.3.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Incluir el CSS de Turn.js y estilos personalizados -->
+    <link rel="stylesheet" href="/src/css/base.css" />
+    <link rel="stylesheet" href="/src/css/album.css" />
+  </head>
+  <body>
+    <!-- Incluir el navbar -->
+    <%- include('partials/navbar') %>
+    <div id="album-container">
+      <div id="flipbook">
+        <div class="hard">Álbum de <%=usuario.username%></div>
+        <div class="hard"></div>
+
+        <% for (let i = 0; i < cards.length; i += 2) { %>
+        <div class="page">
+          <% for (let j = i; j < i + 2 && j < cards.length; j++) { %>
+          <div class="card-container">
+            <div class="result-card <%= cards[j].rarity %>">
+              <div class="card-front"><%= cards[j].name %></div>
+            </div>
+          </div>
+          <% } %>
+        </div>
+        <% } %>
+
+        <!-- Añadir una página en blanco si el número de cartas lo precisa -->
+        <% if (cards.length % 4 <= 2 && cards.length % 4 > 0) { %>
+        <div class="page"></div>
+        <% } %>
+
+        <div class="hard"></div>
+        <div class="hard">Fin ♥</div>
+      </div>
+      <button id="back-to-start" class="btn btn-primary float-end" style="display: none">Volver al inicio</button>
+    </div>
+
+    <!-- Incluir el footer -->
+    <%- include('partials/footer') %>
+
+    <!-- Incluir el JavaScript de jQuery (opcional) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+    <!-- Incluir el JavaScript de Bootstrap 5.3.3 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Incluir el JavaScript personalizado -->
+    <script src="/src/js/turn.min.js"></script>
+    <script src="/src/js/album.js"></script>
+    <script src="/src/js/base.js"></script>
+  </body>
+</html>

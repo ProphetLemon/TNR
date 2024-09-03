@@ -73,17 +73,48 @@ document.addEventListener("DOMContentLoaded", function () {
   buttons.forEach((button) => {
     button.addEventListener("click", function () {
       const numTiradas = parseInt(this.textContent.match(/\d+/)[0]); // Extrae el número de tiradas del texto del botón
-      modalBody.innerHTML = ""; // Limpia el contenido del modal
 
-      // Genera las tarjetas y las añade al modal
-      for (let i = 0; i < numTiradas; i++) {
-        const cardType = getCardType();
-        const cardContainer = createCard(cardType);
-        modalBody.appendChild(cardContainer);
-      }
+      // Realiza la petición AJAX a /tiradas usando jQuery
+      $.ajax({
+        url: "/tiradas",
+        type: "POST",
+        data: { numTiradas: numTiradas },
+        success: function (response) {
+          if (response.type === "success") {
+            modalBody.innerHTML = ""; // Limpia el contenido del modal
 
-      // Muestra el modal con los resultados
-      resultModal.show();
+            // Genera las tarjetas y las añade al modal
+            for (let i = 0; i < numTiradas; i++) {
+              const cardType = getCardType();
+              const cardContainer = createCard(cardType);
+              modalBody.appendChild(cardContainer);
+            }
+
+            // Muestra el modal con los resultados
+            resultModal.show();
+          }
+
+          $("h4 strong").text(response.tiradasRestantes);
+        },
+        error: function (xhr, status, error) {
+          console.error("Hubo un problema con la petición:", status, error);
+          // Actualizar el partial de notificaciones con un mensaje genérico de error
+          updateNotificationPartial(xhr.responseJSON.message, "danger");
+        },
+      });
     });
   });
+
+  // Función para actualizar el partial de notificaciones
+  function updateNotificationPartial(message, type) {
+    const notificationPartial = document.getElementById("notification-partial");
+
+    if (notificationPartial) {
+      notificationPartial.innerHTML = `
+      <div class="alert alert-${type}" role="alert">
+        ${message}
+      </div>
+    `;
+    }
+  }
 });
