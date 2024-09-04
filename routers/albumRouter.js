@@ -5,29 +5,41 @@ const utils = require("../utils");
 
 router.get("/", async (req, res) => {
   const token = req.cookies.iamtoken;
+
+  // Si no hay token, redirigir inmediatamente
   if (!token) {
-    res.redirect("/login");
-  }
-  var user = await User.findOne({ token: token });
-  if (!user) {
-    res.redirect("/login");
+    return res.redirect("/login");
   }
 
-  // Ejemplo de listado de cartas con diferentes rarezas
-  const cards = [
-    { name: "Carta 1", rarity: "normal" },
-    { name: "Carta 2", rarity: "rara" },
-    { name: "Carta 3", rarity: "super-rara" },
-    { name: "Carta 4", rarity: "legendaria" },
-    { name: "Carta 5", rarity: "normal" },
-    { name: "Carta 6", rarity: "rara" },
-    { name: "Carta 7", rarity: "rara" },
-    { name: "Carta 8", rarity: "rara" },
-    { name: "Carta 9", rarity: "rara" },
-    { name: "Carta 10", rarity: "rara" },
-  ];
+  try {
+    const user = await User.findOne({ token: token });
 
-  res.render("album", { usuario: utils.crearProyeccion(user), cards });
+    // Si no se encuentra el usuario, redirigir a login
+    if (!user) {
+      return res.redirect("/login");
+    }
+
+    const cartasMap = user.cartas.reduce((map, carta) => {
+      // Si ya existe la carta en el mapa, incrementa el tamaño
+      if (map.has(carta.nombre)) {
+        map.get(carta.nombre).size += 1;
+      } else {
+        // Si no existe, añade la carta con size inicial en 1
+        map.set(carta.nombre, { ...carta.toObject(), size: 1 });
+      }
+      return map;
+    }, new Map());
+
+    // Convertir el Map en un array de cartas
+    const cartasAlbum = Array.from(cartasMap.values());
+
+    // Renderizar la vista con el usuario y las cartas
+    res.render("album", { usuario: utils.crearProyeccion(user), cards: cartasAlbum });
+  } catch (error) {
+    // Manejo de errores, por ejemplo, conexión a la base de datos fallida
+    console.error("Error al obtener el álbum del usuario:", error);
+    res.status(500).send("Error al cargar el álbum");
+  }
 });
 
 module.exports = router;

@@ -30,32 +30,26 @@ document.addEventListener("DOMContentLoaded", function () {
   const modalBody = document.querySelector("#resultModal .modal-body");
   const resultModal = new bootstrap.Modal(document.getElementById("resultModal"));
 
-  // Función para determinar el tipo de carta ganada
-  function getCardType() {
-    const random = Math.random();
-    if (random < 0.6) return "normal";
-    if (random < 0.85) return "rara";
-    if (random < 0.97) return "super-rara";
-    return "legendaria";
-  }
-
   // Función para crear una tarjeta con el resultado de la tirada
-  function createCard(type) {
+  function createCard(carta) {
     const cardContainer = document.createElement("div");
     cardContainer.classList.add("card-container");
 
     const card = document.createElement("div");
-    card.classList.add("result-card", type, "is-flipped"); // Añade 'is-flipped' para que empiecen boca abajo
+    card.classList.add("result-card", carta.rareza, "is-flipped"); // Añadir 'is-flipped' para que empiece boca abajo
 
     // Lado frontal de la carta (revelado)
     const cardFront = document.createElement("div");
     cardFront.classList.add("card-front");
-    cardFront.textContent = `Carta ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+
+    // Establecer la imagen de fondo desde la propiedad 'url' de la carta
+    cardFront.style.backgroundImage = `url(${carta.url})`;
+    cardFront.style.backgroundSize = "cover"; // Asegura que la imagen cubra completamente la tarjeta
+    cardFront.style.backgroundPosition = "center"; // Centra la imagen en la tarjeta
 
     // Lado trasero de la carta (boca abajo)
     const cardBack = document.createElement("div");
     cardBack.classList.add("card-back");
-    //cardBack.textContent = "Carta";
 
     card.appendChild(cardFront);
     card.appendChild(cardBack);
@@ -63,7 +57,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Evento para voltear la carta
     cardContainer.addEventListener("click", function () {
-      card.classList.toggle("is-flipped");
+      var trigger = card.classList.toggle("is-flipped");
+      if (!trigger) {
+        const audioElement = document.getElementById("audio");
+        audioElement.src = `/src/audio/${carta.nombre}.mp3`;
+        audioElement.play();
+      }
     });
 
     return cardContainer;
@@ -74,32 +73,29 @@ document.addEventListener("DOMContentLoaded", function () {
     button.addEventListener("click", function () {
       const numTiradas = parseInt(this.textContent.match(/\d+/)[0]); // Extrae el número de tiradas del texto del botón
 
-      // Realiza la petición AJAX a /tiradas usando jQuery
+      modalBody.innerHTML = ""; // Limpia el contenido del modal antes de cada tirada
+
+      // Realizar una única llamada a /tiradas pasando el número de tiradas
       $.ajax({
         url: "/tiradas",
         type: "POST",
-        data: { numTiradas: numTiradas },
+        data: { numTiradas: numTiradas }, // Enviar el número de tiradas como parámetro
+        dataType: "json", // Aseguramos que la respuesta sea JSON
         success: function (response) {
-          if (response.type === "success") {
-            modalBody.innerHTML = ""; // Limpia el contenido del modal
+          if (response.type === "success" && Array.isArray(response.cartas)) {
+            // Itera sobre las cartas devueltas y crea una para cada una
+            response.cartas.forEach((carta) => {
+              const cardContainer = createCard(carta); // Crea la carta usando los datos del backend
+              modalBody.appendChild(cardContainer); // Añade la carta al modal
+            });
 
-            // Genera las tarjetas y las añade al modal
-            for (let i = 0; i < numTiradas; i++) {
-              const cardType = getCardType();
-              const cardContainer = createCard(cardType);
-              modalBody.appendChild(cardContainer);
-            }
-
-            // Muestra el modal con los resultados
+            // Mostrar el modal con los resultados
             resultModal.show();
           }
-
-          $("h4 strong").text(response.tiradasRestantes);
         },
         error: function (xhr, status, error) {
           console.error("Hubo un problema con la petición:", status, error);
-          // Actualizar el partial de notificaciones con un mensaje genérico de error
-          updateNotificationPartial(xhr.responseJSON.message, "danger");
+          updateNotificationPartial(xhr.responseJSON.message || "Error en la petición", "danger");
         },
       });
     });
@@ -117,4 +113,14 @@ document.addEventListener("DOMContentLoaded", function () {
     `;
     }
   }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  const resultModal = document.getElementById("resultModal");
+
+  // Escuchar el evento de cierre del modal
+  resultModal.addEventListener("hidden.bs.modal", function () {
+    // Refrescar la página cuando el modal se cierre
+    location.reload();
+  });
 });

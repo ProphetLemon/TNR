@@ -13,25 +13,34 @@
   <body>
     <!-- Incluir el navbar -->
     <%- include('partials/navbar') %>
+    <audio id="audio" class="d-none" src="audio.mp3" type="audio/mpeg"></audio>
     <div id="album-container">
       <div id="flipbook">
         <div class="hard">Álbum de <%=usuario.username%></div>
         <div class="hard"></div>
 
-        <% for (let i = 0; i < cards.length; i += 2) { %>
+        <% for (let i = 0; i < cards.length; i++) { %>
         <div class="page">
-          <% for (let j = i; j < i + 2 && j < cards.length; j++) { %>
           <div class="card-container">
-            <div class="result-card <%= cards[j].rarity %>">
-              <div class="card-front"><%= cards[j].name %></div>
+            <div class="result-card <%= cards[i].rareza %>">
+              <!-- Lado frontal -->
+              <div class="card-front" style="background-image: url(<%=cards[i].url%>); background-size: cover; background-position: center"></div>
+              <!-- Lado trasero -->
+              <div class="card-back">
+                <div class="card-info">
+                  <h5 class="card-title"><%= cards[i].nombre %></h5>
+                  <p class="card-rarity">Rareza: <%= cards[i].rareza %></p>
+                  <p class="card-count">Cantidad: x<%= cards[i].size %></p>
+                  <button id="play-audio-btn" onclick="playAudio('<%=cards[i].nombre%>')">Reproducir Audio</button>
+                </div>
+              </div>
             </div>
           </div>
-          <% } %>
         </div>
         <% } %>
 
         <!-- Añadir una página en blanco si el número de cartas lo precisa -->
-        <% if (cards.length % 4 <= 2 && cards.length % 4 > 0) { %>
+        <% if (cards.length % 2 <= 1 && cards.length % 2 > 0) { %>
         <div class="page"></div>
         <% } %>
 
