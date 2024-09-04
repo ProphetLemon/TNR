@@ -38,3 +38,29 @@ $(document).ready(function () {
     $("#flipbook").turn("page", 1);
   });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+  const cardContainers = document.querySelectorAll(".card-container");
+
+  // Añadir el evento de clic para voltear las cartas
+  cardContainers.forEach((container) => {
+    container.addEventListener("click", function () {
+      const card = container.querySelector(".result-card");
+      card.classList.toggle("is-flipped");
+    });
+
+    // Prevenir la propagación del clic del botón al contenedor de la carta
+    const audioButton = container.querySelector("#play-audio-btn");
+    if (audioButton) {
+      audioButton.addEventListener("click", function (event) {
+        event.stopPropagation(); // Prevenir que el clic en el botón voltee la carta
+      });
+    }
+  });
+});
+
+function playAudio(cardName) {
+  const audioElement = document.getElementById("audio");
+  audioElement.src = `/src/audio/${cardName}.mp3`;
+  audioElement.play();
+}

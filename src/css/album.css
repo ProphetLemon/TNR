@@ -56,13 +56,12 @@
 
 .card-title {
   font-size: 1.2rem;
-  color: #555;
 }
 
 .card-container {
   perspective: 1000px;
-  width: 45%; /* Ajustar ancho para que quepan dos cartas lado a lado */
-  height: 45%; /* Ajustar altura para que quepan dos cartas una encima de otra */
+  width: 70%; /* Ajustar ancho para que quepan dos cartas lado a lado */
+  height: 80%; /* Ajustar altura para que quepan dos cartas una encima de otra */
   position: relative;
   margin: 5% auto; /* Centrando la carta */
 }
@@ -74,56 +73,147 @@
   transform-style: preserve-3d;
   transition: transform 0.6s ease, box-shadow 0.6s ease;
   cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra más prominente */
+  border-radius: 10px; /* Bordes más redondeados */
+  transform: rotateY(0deg); /* Estado inicial, carta no volteada */
 }
 
-.result-card.normal .card-front {
-  background-color: #007bff; /* Azul */
+.result-card.is-flipped,
+.result-card.is-flipped:hover {
+  transform: rotateY(180deg); /* Voltear la carta */
 }
 
-.result-card.rara .card-front {
-  background-color: #28a745; /* Verde */
+.result-card.is-flipped:hover {
+  transform: scale(1.05) rotateY(180deg) !important;
 }
 
-.result-card.super-rara .card-front {
-  background-color: #ffc107; /* Super Rara */
+.result-card:hover {
+  transform: scale(1.05); /* Efecto de hover para resaltar la carta */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Sombra más grande en hover */
 }
 
-.result-card.legendaria .card-front {
-  background-color: #dc3545; /* Legendaria */
+.card-back {
+  background-image: url("/src/img/TNR-logo.png");
+  background-size: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.result-card .card-front {
-  color: white;
+.result-card .card-front,
+.result-card .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
   font-size: 1.2rem;
-  border-radius: 10px;
+  color: white;
 }
 
-@media (max-width: 768px) {
-  #flipbook {
-    width: 100%;
-    height: auto;
-  }
+.result-card .card-back {
+  background-color: #a0522d; /* Color marrón tipo cartón */
+  transform: rotateY(180deg);
+}
 
-  .hard {
-    font-size: 18px;
-    line-height: normal; /* Elimina el line-height fijo para centrar correctamente */
-  }
+.result-card.legendaria {
+  border: 2px solid gold; /* Bordes dorados para cartas legendarias */
+}
 
-  .page:not(.hard) {
-    justify-content: center; /* Centrar las cartas en la página */
-  }
+.result-card.super-rara {
+  border: 2px solid #ff8c00; /* Bordes naranjas para cartas super raras */
+}
 
-  .card-container {
-    width: 80%; /* Aumentar el ancho relativo */
-    height: 40%; /* Reducir altura para que quepan dos cartas */
-    margin: 5% auto; /* Ajustar margen */
+/* Brillo basado en los colores actuales para cada rareza */
+@keyframes glow-normal {
+  0% {
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.7); /* Azul */
   }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 123, 255, 1); /* Azul más fuerte */
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.7); /* Azul */
+  }
+}
 
-  .result-card .card-front {
-    font-size: 1rem;
+@keyframes glow-rara {
+  0% {
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.7); /* Verde */
   }
+  50% {
+    box-shadow: 0 0 20px rgba(40, 167, 69, 1); /* Verde más fuerte */
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.7); /* Verde */
+  }
+}
+
+@keyframes glow-super-rara {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.7); /* Amarillo */
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 193, 7, 1); /* Amarillo más fuerte */
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.7); /* Amarillo */
+  }
+}
+
+@keyframes glow-legendaria {
+  0% {
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.7); /* Rojo (legendaria) */
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(220, 53, 69, 1); /* Rojo más fuerte */
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.7); /* Rojo */
+  }
+}
+
+.result-card.normal {
+  animation: glow-normal 1.5s infinite ease-in-out; /* Brillo para cartas normales */
+}
+
+.result-card.rara {
+  animation: glow-rara 1.5s infinite ease-in-out; /* Brillo para cartas raras */
+}
+
+.result-card.super-rara {
+  animation: glow-super-rara 1.5s infinite ease-in-out; /* Brillo para cartas super raras */
+}
+
+.result-card.legendaria {
+  animation: glow-legendaria 1.5s infinite ease-in-out; /* Brillo para cartas legendarias */
+}
+
+.card-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  text-align: center;
+  padding: 10px;
+  font-size: 0.9rem;
+  border-radius: 0 0 10px 10px; /* Solo las esquinas inferiores redondeadas */
+}
+
+.card-title {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.card-rarity {
+  font-size: 1rem;
+  margin: 5px 0;
+}
+
+.card-count {
+  font-size: 0.9rem;
 }

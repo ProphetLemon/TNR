@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const Schema = mongoose.Schema;
+const Carta = require("./carta").schema;
 
 // Definir el esquema de usuario
 const userSchema = new Schema({
@@ -37,6 +38,10 @@ const userSchema = new Schema({
   tiradas: {
     type: Number,
     default: 0, // Inicializa los puntos en 0
+  },
+  cartas: {
+    type: [Carta],
+    default: [],
   },
   createdAt: {
     type: Date,
