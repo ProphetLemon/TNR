@@ -30,8 +30,17 @@ router.get("/", async (req, res) => {
       return map;
     }, new Map());
 
+    const rarezaValores = {
+      normal: 1,
+      rara: 2,
+      "super-rara": 3,
+      legendaria: 4,
+    };
+
     // Convertir el Map en un array de cartas
-    const cartasAlbum = Array.from(cartasMap.values());
+    const cartasAlbum = Array.from(cartasMap.values()).sort((a, b) => {
+      return rarezaValores[a.rareza] - rarezaValores[b.rareza];
+    });
 
     // Renderizar la vista con el usuario y las cartas
     res.render("album", { usuario: utils.crearProyeccion(user), cards: cartasAlbum });
