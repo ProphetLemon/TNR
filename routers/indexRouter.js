@@ -27,9 +27,10 @@ router.post("/", async (req, res) => {
       user.tiradas -= tiradas;
       var user = await user.save();
 
-      var cartas = await Carta.find();
       var cartasElegidas = [];
       for (let i = 0; i < tiradas; i++) {
+        var rareza = obtenerRareza();
+        var cartas = await Carta.find({ rareza: rareza });
         cartasElegidas.push(cartas[Math.floor(Math.random())]);
       }
       user.cartas.push(...cartasElegidas);
@@ -55,5 +56,19 @@ router.post("/", async (req, res) => {
     });
   }
 });
+
+function obtenerRareza() {
+  const aleatorio = Math.random();
+
+  if (aleatorio < 0.7) {
+    return "normal"; // 70% de probabilidad
+  } else if (aleatorio < 0.9) {
+    return "rara"; // 20% de probabilidad
+  } else if (aleatorio < 0.999) {
+    return "super-rara"; // 9.99% de probabilidad
+  } else {
+    return "legendaria"; // 0.01% de probabilidad
+  }
+}
 
 module.exports = router;
