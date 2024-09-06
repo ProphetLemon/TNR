@@ -40,7 +40,7 @@ const userSchema = new Schema({
     default: 0, // Inicializa los puntos en 0
   },
   cartas: {
-    type: [string],
+    type: [String],
     default: [],
   },
   createdAt: {
