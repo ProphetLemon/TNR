@@ -6,20 +6,23 @@ const cardSchema = new Schema({
   rareza: {
     type: String,
     required: true,
+    enum: ["normal", "rara", "muy-rara", "legendaria"], // Validación para los valores de rareza
   },
   nombre: {
     type: String,
     required: true,
-  },
-  url: {
-    type: String,
-    required: true,
     unique: true,
+  },
+  imagen: {
+    type: Buffer, // Almacena el ID del archivo en GridFS
+    required: true,
+  },
+  audio: {
+    type: Buffer, // Almacena el ID del archivo en GridFS
+    required: true,
   },
 });
 
-// Crear el modelo de carta
 const Carta = mongoose.model("Carta", cardSchema);
 
-// Exportar el modelo
 module.exports = Carta;

@@ -59,8 +59,8 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-function playAudio(cardName) {
+function playAudio(audioBase64) {
   const audioElement = document.getElementById("audio");
-  audioElement.src = `/src/audio/${cardName}.mp3`;
+  audioElement.src = audioBase64;
   audioElement.play();
 }
