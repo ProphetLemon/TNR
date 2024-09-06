@@ -1,10 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
-const { GridFsStorage } = require("multer-gridfs-storage");
-const Grid = require("gridfs-stream");
+const mongoose = require("mongoose");;
 const User = require("../models/user");
-const multer = require("multer");
 const Carta = require("../models/carta");
 const utils = require("../utils");
 
@@ -19,31 +16,6 @@ router.get("/", async (req, res) => {
   }
   res.render("crear", { message: null, type: null });
 });
-
-let gfs;
-let storage;
-
-mongoose.connection.once("open", () => {
-  gfs = Grid(mongoose.connection.db, mongoose.mongo);
-  gfs.collection("uploads");
-
-  // Configurar GridFS Storage
-  storage = new GridFsStorage({
-    db: mongoose.connection.db,
-    file: (req, file) => {
-      return new Promise((resolve, reject) => {
-        const filename = Date.now() + "-" + file.originalname;
-        const fileInfo = {
-          filename: filename,
-          bucketName: "uploads", // Nombre del bucket donde se almacenarán los archivos
-        };
-        resolve(fileInfo);
-      });
-    },
-  });
-});
-
-const upload = multer({ storage });
 
 router.post(
   "/",
