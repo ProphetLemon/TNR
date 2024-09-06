@@ -57,7 +57,8 @@ router.post("/", async (req, res) => {
           audioBase64: base64Audio,
         });
       }
-      user.cartas.push(...cartasElegidas);
+      const nombresCartas = cartasElegidas.map((carta) => carta.nombre);
+      user.cartas.push(...nombresCartas);
       await user.save();
       // Responder con un estado 200 de éxito
       return res.status(200).json({

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
+const Carta = require("../models/carta");
 const utils = require("../utils");
 
 router.get("/", async (req, res) => {
@@ -19,7 +20,8 @@ router.get("/", async (req, res) => {
       return res.redirect("/login");
     }
 
-    const cartasMap = user.cartas.reduce((map, carta) => {
+    const cartasMap = user.cartas.reduce(async (map, nombreCarta) => {
+      var carta = await Carta.findOne({ nombre: nombreCarta });
       // Si ya existe la carta en el mapa, incrementa el tamaño
       if (map.has(carta.nombre)) {
         map.get(carta.nombre).size += 1;
