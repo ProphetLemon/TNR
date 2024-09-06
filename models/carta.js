@@ -6,7 +6,7 @@ const cardSchema = new Schema({
   rareza: {
     type: String,
     required: true,
-    enum: ["normal", "rara", "muy-rara", "legendaria"], // Validación para los valores de rareza
+    enum: ["normal", "rara", "super-rara", "legendaria"], // Validación para los valores de rareza
   },
   nombre: {
     type: String,
