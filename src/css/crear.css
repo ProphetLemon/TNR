@@ -1,0 +1,78 @@
+/* Estilos para la página de creación de cartas */
+.crear-carta-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.crear-carta-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.crear-carta-container label {
+  font-weight: bold;
+}
+
+.crear-carta-container input[type="text"],
+.crear-carta-container input[type="file"] {
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ced4da;
+}
+
+.crear-carta-container button[type="submit"] {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.crear-carta-container button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+.crear-carta-container {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  margin-top: 30px;
+}
+
+.crear-carta-container h1 {
+  margin-bottom: 30px;
+}
+
+.crear-carta-container label {
+  font-weight: bold;
+  color: #ffffff;
+}
+
+#preview-image {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 5px;
+  border: 2px solid #ddd;
+}
+
+/* Añadir cualquier estilo adicional para el select si es necesario */
+.form-select {
+  color: #000; /* Ajusta el color si quieres un contraste con el fondo oscuro */
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  padding: 10px;
+}

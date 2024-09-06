@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
     cardFront.classList.add("card-front");
 
     // Establecer la imagen de fondo desde la propiedad 'url' de la carta
-    cardFront.style.backgroundImage = `url(${carta.url})`;
+    cardFront.style.backgroundImage = `url(${carta.imagenBase64})`;
     cardFront.style.backgroundSize = "cover"; // Asegura que la imagen cubra completamente la tarjeta
     cardFront.style.backgroundPosition = "center"; // Centra la imagen en la tarjeta
 
@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
       var trigger = card.classList.toggle("is-flipped");
       if (!trigger) {
         const audioElement = document.getElementById("audio");
-        audioElement.src = `/src/audio/${carta.nombre}.mp3`;
+        audioElement.src = carta.audioBase64;
         audioElement.play();
       }
     });

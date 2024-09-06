@@ -31,7 +31,31 @@ router.post("/", async (req, res) => {
       for (let i = 0; i < tiradas; i++) {
         var rareza = obtenerRareza();
         var cartas = await Carta.find({ rareza: rareza });
-        cartasElegidas.push(cartas[Math.floor(Math.random())]);
+        const cartaElegida = cartas[Math.floor(Math.random() * cartas.length)];
+
+        // Convertir ArrayBuffer de imagen y audio a Base64 si existen
+        let base64Imagen = null;
+        let base64Audio = null;
+
+        // Convertir ArrayBuffer a Buffer de Node.js y luego a Base64
+        if (cartaElegida.imagen && cartaElegida.imagen.buffer) {
+          const bufferImagen = Buffer.from(cartaElegida.imagen.buffer); // Convertir ArrayBuffer a Buffer
+          const mimetypeImagen = cartaElegida.imagen.mimetype || "image/png"; // Definir un mimetype predeterminado si no existe
+          base64Imagen = `data:${mimetypeImagen};base64,${bufferImagen.toString("base64")}`;
+        }
+
+        if (cartaElegida.audio && cartaElegida.audio.buffer) {
+          const bufferAudio = Buffer.from(cartaElegida.audio.buffer); // Convertir ArrayBuffer a Buffer
+          const mimetypeAudio = cartaElegida.audio.mimetype || "audio/mpeg"; // Definir un mimetype predeterminado si no existe
+          base64Audio = `data:${mimetypeAudio};base64,${bufferAudio.toString("base64")}`;
+        }
+
+        // Empujar la carta con la imagen y el audio en Base64
+        cartasElegidas.push({
+          ...cartaElegida.toObject(),
+          imagenBase64: base64Imagen,
+          audioBase64: base64Audio,
+        });
       }
       user.cartas.push(...cartasElegidas);
       await user.save();

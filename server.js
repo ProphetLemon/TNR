@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const baseRouter = require("./routers/baseRouter");
 const albumRouter = require("./routers/albumRouter");
 const indexRouter = require("./routers/indexRouter");
+const crearCartaRouter = require("./routers/crearCartaRouter");
 const dotenv = require("dotenv");
 const cron = require("node-cron");
 const User = require("./models/user");
@@ -34,6 +35,8 @@ app.use("/", baseRouter);
 app.use("/tiradas", indexRouter);
 
 app.use("/album", albumRouter);
+
+app.use("/crear", crearCartaRouter);
 
 // Conectar a MongoDB
 mongoose
