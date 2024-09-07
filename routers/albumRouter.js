@@ -20,14 +20,18 @@ router.get("/", async (req, res) => {
       return res.redirect("/login");
     }
 
+    // Obtener todas las cartas de la base de datos antes de comenzar la iteración
+    const todasLasCartas = await Carta.find();
+
     // Usamos un Map para almacenar las cartas
     const cartasMap = new Map();
 
     // Iteramos de forma síncrona sobre user.cartas (que contiene solo los nombres de las cartas)
     for (const nombreCarta of user.cartas) {
-      const carta = await Carta.findOne({ nombre: nombreCarta });
+      // Filtrar las cartas por el nombre
+      const carta = todasLasCartas.find((c) => c.nombre === nombreCarta);
 
-      if (!carta) continue; // Si la carta no existe, continuamos al siguiente
+      if (!carta) continue; // Si la carta no existe, continuar con la siguiente
 
       // Si ya existe la carta en el mapa, incrementa el tamaño
       if (cartasMap.has(carta.nombre)) {
