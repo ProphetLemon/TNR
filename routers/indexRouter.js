@@ -20,56 +20,63 @@ router.post("/", async (req, res) => {
           message: `No tienes tantas tiradas (tienes ${user.tiradas} y has intentado tirar ${tiradas})`,
           type: "error",
         });
-        // Detiene la ejecución aquí si las tiradas son insuficientes
       }
 
       // Restar las tiradas y guardar el usuario
       user.tiradas -= tiradas;
       var user = await user.save();
 
+      // Obtener todas las cartas una vez antes del bucle
+      const todasLasCartas = await Carta.find();
+
       var cartasElegidas = [];
       for (let i = 0; i < tiradas; i++) {
         var rareza = obtenerRareza();
-        var cartas = await Carta.find({ rareza: rareza });
-        const cartaElegida = cartas[Math.floor(Math.random() * cartas.length)];
 
-        // Convertir ArrayBuffer de imagen y audio a Base64 si existen
-        let base64Imagen = null;
-        let base64Audio = null;
+        // Filtrar cartas por rareza dentro del bucle
+        var cartasFiltradas = todasLasCartas.filter((carta) => carta.rareza === rareza);
 
-        // Convertir ArrayBuffer a Buffer de Node.js y luego a Base64
-        if (cartaElegida.imagen && cartaElegida.imagen.buffer) {
-          const bufferImagen = Buffer.from(cartaElegida.imagen.buffer); // Convertir ArrayBuffer a Buffer
-          const mimetypeImagen = cartaElegida.imagen.mimetype || "image/png"; // Definir un mimetype predeterminado si no existe
-          base64Imagen = `data:${mimetypeImagen};base64,${bufferImagen.toString("base64")}`;
+        if (cartasFiltradas.length > 0) {
+          const cartaElegida = cartasFiltradas[Math.floor(Math.random() * cartasFiltradas.length)];
+
+          // Convertir ArrayBuffer de imagen y audio a Base64 si existen
+          let base64Imagen = null;
+          let base64Audio = null;
+
+          if (cartaElegida.imagen && cartaElegida.imagen.buffer) {
+            const bufferImagen = Buffer.from(cartaElegida.imagen.buffer); // Convertir ArrayBuffer a Buffer
+            const mimetypeImagen = cartaElegida.imagen.mimetype || "image/png"; // Definir un mimetype predeterminado si no existe
+            base64Imagen = `data:${mimetypeImagen};base64,${bufferImagen.toString("base64")}`;
+          }
+
+          if (cartaElegida.audio && cartaElegida.audio.buffer) {
+            const bufferAudio = Buffer.from(cartaElegida.audio.buffer); // Convertir ArrayBuffer a Buffer
+            const mimetypeAudio = cartaElegida.audio.mimetype || "audio/mpeg"; // Definir un mimetype predeterminado si no existe
+            base64Audio = `data:${mimetypeAudio};base64,${bufferAudio.toString("base64")}`;
+          }
+
+          // Añadir la carta con la imagen y el audio en Base64
+          cartasElegidas.push({
+            ...cartaElegida.toObject(),
+            imagenBase64: base64Imagen,
+            audioBase64: base64Audio,
+          });
         }
-
-        if (cartaElegida.audio && cartaElegida.audio.buffer) {
-          const bufferAudio = Buffer.from(cartaElegida.audio.buffer); // Convertir ArrayBuffer a Buffer
-          const mimetypeAudio = cartaElegida.audio.mimetype || "audio/mpeg"; // Definir un mimetype predeterminado si no existe
-          base64Audio = `data:${mimetypeAudio};base64,${bufferAudio.toString("base64")}`;
-        }
-
-        // Empujar la carta con la imagen y el audio en Base64
-        cartasElegidas.push({
-          ...cartaElegida.toObject(),
-          imagenBase64: base64Imagen,
-          audioBase64: base64Audio,
-        });
       }
+
       const nombresCartas = cartasElegidas.map((carta) => carta.nombre);
       user.cartas.push(...nombresCartas);
       await user.save();
-      // Responder con un estado 200 de éxito
+
+      // Responder con éxito
       return res.status(200).json({
         message: "Tirada realizada con éxito",
         cartas: cartasElegidas,
         type: "success",
       });
     } else {
-      // Si no hay token en las cookies, darte error
       return res.status(401).json({
-        message: `No estás logueado para hacer eso`,
+        message: "No estás logueado para hacer eso",
         type: "error",
       });
     }

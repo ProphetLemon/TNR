@@ -18,7 +18,7 @@ $(document).ready(function () {
     const rareza = $("#rareza").val();
     const imagen = $("#imagen").val();
     const audio = $("#audio").val();
-    var loadingModal = new bootstrap.Modal(document.getElementById("loadingModal"));
+    const loadingModal = $("#loadingModal");
 
     // Verificar que todos los campos estén completos
     if (!nombre || !rareza || !imagen || !audio) {
@@ -52,6 +52,12 @@ $(document).ready(function () {
       alert("Por favor, selecciona un archivo de audio válido (mp3 o wav).");
       return;
     }
-    loadingModal.show();
+
+    loadingModal.modal({
+      backdrop: "static", // Evita el cierre al hacer clic fuera del modal
+      keyboard: false, // Evita el cierre al presionar "Escape"
+    });
+
+    loadingModal.modal("show");
   });
 });
