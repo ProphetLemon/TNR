@@ -24,43 +24,68 @@ router.post("/", async (req, res) => {
 
       // Restar las tiradas y guardar el usuario
       user.tiradas -= tiradas;
-      var user = await user.save();
-
-      // Obtener todas las cartas una vez antes del bucle
-      const todasLasCartas = await Carta.find();
+      await user.save();
 
       var cartasElegidas = [];
       for (let i = 0; i < tiradas; i++) {
         var rareza = obtenerRareza();
 
-        // Filtrar cartas por rareza dentro del bucle
-        var cartasFiltradas = todasLasCartas.filter((carta) => carta.rareza === rareza);
+        // Obtener solo el nombre de una carta aleatoria con la rareza correspondiente
+        const resultadoCarta = await Carta.aggregate([
+          { $match: { rareza: rareza } }, // Filtrar por rareza
+          { $sample: { size: 1 } }, // Obtener una carta aleatoria
+          {
+            $project: {
+              // Proyección para devolver solo el nombre
+              nombre: 1,
+              _id: 0,
+            },
+          },
+        ]);
 
-        if (cartasFiltradas.length > 0) {
-          const cartaElegida = cartasFiltradas[Math.floor(Math.random() * cartasFiltradas.length)];
+        if (resultadoCarta.length > 0) {
+          const nombreCarta = resultadoCarta[0].nombre; // Obtener solo el nombre de la carta
 
-          // Convertir ArrayBuffer de imagen y audio a Base64 si existen
-          let base64Imagen = null;
-          let base64Audio = null;
+          // Buscar si ya existe una carta con el mismo nombre en cartasElegidas
+          const cartaDuplicada = cartasElegidas.find((carta) => carta.nombre === nombreCarta);
 
-          if (cartaElegida.imagen && cartaElegida.imagen.buffer) {
-            const bufferImagen = Buffer.from(cartaElegida.imagen.buffer); // Convertir ArrayBuffer a Buffer
-            const mimetypeImagen = cartaElegida.imagen.mimetype || "image/png"; // Definir un mimetype predeterminado si no existe
-            base64Imagen = `data:${mimetypeImagen};base64,${bufferImagen.toString("base64")}`;
+          let cartaElegida;
+          if (cartaDuplicada) {
+            // Duplicar la carta encontrada
+            cartaElegida = { ...cartaDuplicada };
+          } else {
+            // Obtener la carta completa ya que no fue duplicada
+            const cartaCompleta = await Carta.findOne({ nombre: nombreCarta, rareza: rareza });
+
+            if (cartaCompleta) {
+              // Convertir ArrayBuffer de imagen y audio a Base64 si existen
+              let base64Imagen = null;
+              let base64Audio = null;
+
+              if (cartaCompleta.imagen && cartaCompleta.imagen.buffer) {
+                const bufferImagen = Buffer.from(cartaCompleta.imagen.buffer); // Convertir ArrayBuffer a Buffer
+                const mimetypeImagen = cartaCompleta.imagen.mimetype || "image/png"; // Definir un mimetype predeterminado si no existe
+                base64Imagen = `data:${mimetypeImagen};base64,${bufferImagen.toString("base64")}`;
+              }
+
+              if (cartaCompleta.audio && cartaCompleta.audio.buffer) {
+                const bufferAudio = Buffer.from(cartaCompleta.audio.buffer); // Convertir ArrayBuffer a Buffer
+                const mimetypeAudio = cartaCompleta.audio.mimetype || "audio/mpeg"; // Definir un mimetype predeterminado si no existe
+                base64Audio = `data:${mimetypeAudio};base64,${bufferAudio.toString("base64")}`;
+              }
+
+              // Añadir la carta con la imagen y el audio en Base64
+              cartaElegida = {
+                ...cartaCompleta.toObject(),
+                imagenBase64: base64Imagen,
+                audioBase64: base64Audio,
+              };
+            }
           }
 
-          if (cartaElegida.audio && cartaElegida.audio.buffer) {
-            const bufferAudio = Buffer.from(cartaElegida.audio.buffer); // Convertir ArrayBuffer a Buffer
-            const mimetypeAudio = cartaElegida.audio.mimetype || "audio/mpeg"; // Definir un mimetype predeterminado si no existe
-            base64Audio = `data:${mimetypeAudio};base64,${bufferAudio.toString("base64")}`;
+          if (cartaElegida) {
+            cartasElegidas.push(cartaElegida);
           }
-
-          // Añadir la carta con la imagen y el audio en Base64
-          cartasElegidas.push({
-            ...cartaElegida.toObject(),
-            imagenBase64: base64Imagen,
-            audioBase64: base64Audio,
-          });
         }
       }
 

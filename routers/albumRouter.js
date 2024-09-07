@@ -20,23 +20,16 @@ router.get("/", async (req, res) => {
       return res.redirect("/login");
     }
 
-    // Obtener todas las cartas de la base de datos antes de comenzar la iteración
-    const todasLasCartas = await Carta.find();
-
     // Usamos un Map para almacenar las cartas
     const cartasMap = new Map();
 
     // Iteramos de forma síncrona sobre user.cartas (que contiene solo los nombres de las cartas)
     for (const nombreCarta of user.cartas) {
-      // Filtrar las cartas por el nombre
-      const carta = todasLasCartas.find((c) => c.nombre === nombreCarta);
-
-      if (!carta) continue; // Si la carta no existe, continuar con la siguiente
-
       // Si ya existe la carta en el mapa, incrementa el tamaño
-      if (cartasMap.has(carta.nombre)) {
-        cartasMap.get(carta.nombre).size += 1;
+      if (cartasMap.has(nombreCarta)) {
+        cartasMap.get(nombreCarta).size += 1;
       } else {
+        const carta = await Carta.findOne({ nombre: nombreCarta });
         // Si no existe, convierte la imagen y el audio a Base64 y añade la carta con size inicial en 1
         let base64Imagen = null;
         let base64Audio = null;
