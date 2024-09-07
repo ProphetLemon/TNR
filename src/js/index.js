@@ -1,9 +1,13 @@
+/**
+ * Se ejecuta cuando el DOM ha sido completamente cargado.
+ * Añade un efecto ripple a los botones de tiradas al hacer clic.
+ */
 document.addEventListener("DOMContentLoaded", function () {
   const buttons = document.querySelectorAll(".tiradas-buttons .btn");
 
   buttons.forEach((button) => {
     button.addEventListener("click", function (e) {
-      // Obtener la posición relativa del click dentro del botón
+      // Obtener la posición relativa del clic dentro del botón
       const rect = button.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
@@ -17,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Añadir el span al botón
       button.appendChild(ripple);
 
-      // Eliminar el span después de la animación
+      // Eliminar el span después de la animación (600ms)
       setTimeout(() => {
         ripple.remove();
       }, 600); // Duración de la animación
@@ -25,29 +29,37 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+/**
+ * Se ejecuta cuando el DOM ha sido completamente cargado.
+ * Maneja la interacción de los botones de tiradas y la visualización de los modales.
+ */
 document.addEventListener("DOMContentLoaded", function () {
   const buttons = document.querySelectorAll(".tiradas-buttons .btn");
   const modalBody = document.querySelector("#resultModal .modal-body");
-  const resultModal = new bootstrap.Modal(document.getElementById("resultModal"));
+  const loadingModal = $("#loadingModal"); // Selecciona el modal de carga usando jQuery
+  const resultModal = $("#resultModal"); // Selecciona el modal de resultados usando jQuery
 
-  // Función para crear una tarjeta con el resultado de la tirada
+  /**
+   * Crea una tarjeta de resultado a partir de los datos de la carta.
+   * @param {Object} carta - Objeto que representa la carta.
+   * @param {string} carta.rareza - La rareza de la carta (e.g., común, rara).
+   * @param {string} carta.imagenBase64 - Imagen de la carta en formato base64.
+   * @param {string} carta.audioBase64 - Audio asociado a la carta en formato base64.
+   * @returns {HTMLElement} cardContainer - El contenedor de la tarjeta.
+   */
   function createCard(carta) {
     const cardContainer = document.createElement("div");
     cardContainer.classList.add("card-container");
 
     const card = document.createElement("div");
-    card.classList.add("result-card", carta.rareza, "is-flipped"); // Añadir 'is-flipped' para que empiece boca abajo
+    card.classList.add("result-card", carta.rareza, "is-flipped");
 
-    // Lado frontal de la carta (revelado)
     const cardFront = document.createElement("div");
     cardFront.classList.add("card-front");
-
-    // Establecer la imagen de fondo desde la propiedad 'url' de la carta
     cardFront.style.backgroundImage = `url(${carta.imagenBase64})`;
-    cardFront.style.backgroundSize = "cover"; // Asegura que la imagen cubra completamente la tarjeta
-    cardFront.style.backgroundPosition = "center"; // Centra la imagen en la tarjeta
+    cardFront.style.backgroundSize = "cover";
+    cardFront.style.backgroundPosition = "center";
 
-    // Lado trasero de la carta (boca abajo)
     const cardBack = document.createElement("div");
     cardBack.classList.add("card-back");
 
@@ -55,9 +67,9 @@ document.addEventListener("DOMContentLoaded", function () {
     card.appendChild(cardBack);
     cardContainer.appendChild(card);
 
-    // Evento para voltear la carta
+    // Añadir evento para voltear la carta al hacer clic
     cardContainer.addEventListener("click", function () {
-      var trigger = card.classList.toggle("is-flipped");
+      const trigger = card.classList.toggle("is-flipped");
       if (!trigger) {
         const audioElement = document.getElementById("audio");
         audioElement.src = carta.audioBase64;
@@ -68,40 +80,62 @@ document.addEventListener("DOMContentLoaded", function () {
     return cardContainer;
   }
 
-  // Función para manejar el clic en los botones de tiradas
+  /**
+   * Añade el evento de clic para los botones de tiradas.
+   * Realiza la solicitud AJAX para obtener los resultados de las tiradas y manejar los modales.
+   */
   buttons.forEach((button) => {
     button.addEventListener("click", function () {
-      const numTiradas = parseInt(this.textContent.match(/\d+/)[0]); // Extrae el número de tiradas del texto del botón
+      // Deshabilitar los botones de tiradas mientras se procesa
+      $(".tiradas-buttons .btn").prop("disabled", true);
 
-      modalBody.innerHTML = ""; // Limpia el contenido del modal antes de cada tirada
+      const numTiradas = parseInt(this.textContent.match(/\d+/)[0]); // Extrae el número de tiradas del botón
 
-      // Realizar una única llamada a /tiradas pasando el número de tiradas
-      $.ajax({
-        url: "/tiradas",
-        type: "POST",
-        data: { numTiradas: numTiradas }, // Enviar el número de tiradas como parámetro
-        dataType: "json", // Aseguramos que la respuesta sea JSON
-        success: function (response) {
-          if (response.type === "success" && Array.isArray(response.cartas)) {
-            // Itera sobre las cartas devueltas y crea una para cada una
-            response.cartas.forEach((carta) => {
-              const cardContainer = createCard(carta); // Crea la carta usando los datos del backend
-              modalBody.appendChild(cardContainer); // Añade la carta al modal
-            });
+      modalBody.innerHTML = ""; // Limpia el contenido del modal de resultados
 
-            // Mostrar el modal con los resultados
-            resultModal.show();
-          }
-        },
-        error: function (xhr, status, error) {
-          console.error("Hubo un problema con la petición:", status, error);
-          updateNotificationPartial(xhr.responseJSON.message || "Error en la petición", "danger");
-        },
+      // Mostrar el modal de carga antes de la llamada AJAX
+      loadingModal.modal("show");
+
+      // Una vez que el modal de carga ha sido completamente mostrado
+      loadingModal.on("shown.bs.modal", function () {
+        $.ajax({
+          url: "/tiradas",
+          type: "POST",
+          data: { numTiradas: numTiradas }, // Enviar el número de tiradas como parámetro
+          dataType: "json",
+          success: function (response) {
+            if (response.type === "success" && Array.isArray(response.cartas)) {
+              response.cartas.forEach((carta) => {
+                const cardContainer = createCard(carta); // Crear tarjeta para cada carta
+                modalBody.appendChild(cardContainer); // Añadir la tarjeta al modal
+              });
+
+              // Ocultar el modal de carga y mostrar el modal de resultados
+              loadingModal.modal("hide");
+
+              // Cuando el modal de carga se haya ocultado completamente
+              loadingModal.on("hidden.bs.modal", function () {
+                resultModal.modal("show"); // Mostrar el modal de resultados
+              });
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error("Hubo un problema con la petición:", status, error);
+            updateNotificationPartial(xhr.responseJSON.message || "Error en la petición", "danger");
+
+            // Ocultar el modal de carga en caso de error
+            loadingModal.modal("hide");
+          },
+        });
       });
     });
   });
 
-  // Función para actualizar el partial de notificaciones
+  /**
+   * Actualiza el contenido del partial de notificaciones.
+   * @param {string} message - El mensaje que se va a mostrar en la notificación.
+   * @param {string} type - El tipo de notificación (e.g., 'success', 'danger').
+   */
   function updateNotificationPartial(message, type) {
     const notificationPartial = document.getElementById("notification-partial");
 
@@ -115,12 +149,14 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+/**
+ * Refresca la página cuando el modal de resultados se cierra.
+ */
 document.addEventListener("DOMContentLoaded", function () {
   const resultModal = document.getElementById("resultModal");
 
   // Escuchar el evento de cierre del modal
   resultModal.addEventListener("hidden.bs.modal", function () {
-    // Refrescar la página cuando el modal se cierre
-    location.reload();
+    location.reload(); // Refrescar la página cuando el modal se cierre
   });
 });
