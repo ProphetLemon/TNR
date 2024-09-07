@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
+const Carta = require("../models/carta");
 const utils = require("../utils");
 
 router.get("/", async (req, res) => {
@@ -19,10 +20,18 @@ router.get("/", async (req, res) => {
       return res.redirect("/login");
     }
 
-    const cartasMap = user.cartas.reduce((map, carta) => {
+    // Usamos un Map para almacenar las cartas
+    const cartasMap = new Map();
+
+    // Iteramos de forma síncrona sobre user.cartas (que contiene solo los nombres de las cartas)
+    for (const nombreCarta of user.cartas) {
+      const carta = await Carta.findOne({ nombre: nombreCarta });
+
+      if (!carta) continue; // Si la carta no existe, continuamos al siguiente
+
       // Si ya existe la carta en el mapa, incrementa el tamaño
-      if (map.has(carta.nombre)) {
-        map.get(carta.nombre).size += 1;
+      if (cartasMap.has(carta.nombre)) {
+        cartasMap.get(carta.nombre).size += 1;
       } else {
         // Si no existe, convierte la imagen y el audio a Base64 y añade la carta con size inicial en 1
         let base64Imagen = null;
@@ -43,15 +52,14 @@ router.get("/", async (req, res) => {
         }
 
         // Añadir la carta al mapa con las versiones en Base64 de la imagen y el audio
-        map.set(carta.nombre, {
+        cartasMap.set(carta.nombre, {
           ...carta.toObject(),
           imagenBase64: base64Imagen,
           audioBase64: base64Audio,
           size: 1,
         });
       }
-      return map;
-    }, new Map());
+    }
 
     const rarezaValores = {
       normal: 1,
