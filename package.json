@@ -1,6 +1,6 @@
 {
   "name": "gatcha",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "Gactha para amiwis",
   "main": "server.js",
   "scripts": {
