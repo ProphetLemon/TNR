@@ -81,6 +81,7 @@ router.post("/register", async (req, res) => {
     const newUser = new User({
       username,
       password, // El hashing de la contraseña se maneja en el modelo
+      tiradas: 60,
     });
 
     // Guardar el nuevo usuario en la base de datos

@@ -94,6 +94,11 @@ document.addEventListener("DOMContentLoaded", function () {
       modalBody.innerHTML = ""; // Limpia el contenido del modal de resultados
 
       // Mostrar el modal de carga antes de la llamada AJAX
+      loadingModal.modal({
+        backdrop: "static", // Evita el cierre al hacer clic fuera del modal
+        keyboard: false, // Evita el cierre al presionar "Escape"
+      });
+
       loadingModal.modal("show");
 
       // Una vez que el modal de carga ha sido completamente mostrado
